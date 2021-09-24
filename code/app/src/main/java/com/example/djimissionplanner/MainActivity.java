@@ -1,6 +1,7 @@
 package com.example.djimissionplanner;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,19 +26,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
+import dji.common.realname.AircraftBindingState;
+import dji.common.realname.AppActivationState;
+import dji.common.useraccount.UserAccountState;
+import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
+import dji.sdk.realname.AppActivationManager;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
+import dji.sdk.useraccount.UserAccountManager;
 
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getName();
     public static final String FLAG_CONNECTION_CHANGE = "dji_sdk_connection_change";
     private static BaseProduct mProduct;
     private Handler mHandler;
+
+    private AppActivationManager appActivationManager;
+    private AppActivationState.AppActivationStateListener activationStateListener;
+    private AircraftBindingState.AircraftBindingStateListener bindingStateListener;
+
 
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
             Manifest.permission.VIBRATE,
@@ -52,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
     };
-    private List<String> missingPermission = new ArrayList<>();
+    private final List<String> missingPermission = new ArrayList<>();
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
@@ -66,10 +79,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-
+        initUI();
         //Initialize DJI SDK Manager
         mHandler = new Handler(Looper.getMainLooper());
 
+    }
+
+    private void initUI() {
+        Button msPlannerBtn = (Button) findViewById(R.id.msPlannerBtn);
+        msPlannerBtn.setOnClickListener(this);
+
+        Button loginBtn = (Button) findViewById(R.id.loginBtn);
+        loginBtn.setOnClickListener(this);
+
+        Button logoutBtn = (Button) findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(this);
     }
 
     /**
@@ -119,7 +143,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @return
+     */
+    public static synchronized BaseProduct getProductInstance() {
+        if (null == mProduct) {
+            mProduct = DJISDKManager.getInstance().getProduct();
+        }
+        return mProduct;
+    }
 
+    /**
+     * 注册DJI SDK
+     */
     private void startSDKRegistration() {
         if (isRegistrationInProgress.compareAndSet(false, true)) {
             AsyncTask.execute(new Runnable() {
@@ -145,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
                             notifyStatusChange();
 
                         }
+
                         @Override
                         public void onProductConnect(BaseProduct baseProduct) {
                             Log.d(TAG, String.format("onProductConnect newProduct:%s", baseProduct));
@@ -179,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                                             newComponent));
 
                         }
+
                         @Override
                         public void onInitProcess(DJISDKInitEvent djisdkInitEvent, int i) {
 
@@ -218,6 +257,146 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initData(){
+        setUpListener();
+
+        appActivationManager = DJISDKManager.getInstance().getAppActivationManager();
+
+        if (appActivationManager != null) {
+            appActivationManager.addAppActivationStateListener(activationStateListener);
+            appActivationManager.addAircraftBindingStateListener(bindingStateListener);
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showToast("" + appActivationManager.getAppActivationState());
+                    showToast("" + appActivationManager.getAircraftBindingState());
+                }
+            });
+        }
+    }
+
+    /**
+     * 设置激活状态监听器
+     */
+    private void setUpListener() {
+        // Example of Listener
+        activationStateListener = new AppActivationState.AppActivationStateListener() {
+            @Override
+            public void onUpdate(final AppActivationState appActivationState) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast("" + appActivationState);
+                    }
+                });
+            }
+        };
+
+        bindingStateListener = new AircraftBindingState.AircraftBindingStateListener() {
+
+            @Override
+            public void onUpdate(final AircraftBindingState bindingState) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast("" + bindingState);
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     *  关闭激活监听器
+     */
+    private void tearDownListener() {
+        if (activationStateListener != null) {
+            appActivationManager.removeAppActivationStateListener(activationStateListener);
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showToast("Unknown");
+                }
+            });
+        }
+        if (bindingStateListener !=null) {
+            appActivationManager.removeAircraftBindingStateListener(bindingStateListener);
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showToast("Unknown");
+                }
+            });
+        }
+    }
+
+    /**
+     * 登录dji账号
+     */
+    private void loginAccount(){
+        UserAccountManager.getInstance().logIntoDJIUserAccount(this,
+                new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
+                    @Override
+                    public void onSuccess(final UserAccountState userAccountState) {
+                        showToast("Login Success");
+                    }
+                    @Override
+                    public void onFailure(DJIError error) {
+                        showToast("Login Error:"
+                                + error.getDescription());
+                    }
+                });
+
+    }
+
+    /**
+     * 注销dji账号
+     */
+    private void logoutAccount(){
+        UserAccountManager.getInstance().logoutOfDJIUserAccount(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                if (null == error) {
+                    showToast("Logout Success");
+                } else {
+                    showToast("Logout Error:"
+                            + error.getDescription());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(TAG, "onResume");
+        setUpListener();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        tearDownListener();
+        super.onDestroy();
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.msPlannerBtn:
+                Intent intent = new Intent(MainActivity.this, MissonPlannerActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.loginBtn:
+                loginAccount();
+            case R.id.logoutBtn:
+                logoutAccount();
+            default:
+                break;
+        }
     }
 }
 

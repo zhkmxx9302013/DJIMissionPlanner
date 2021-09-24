@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.djimissionplanner">
-
     <!-- SDK permission requirement -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -12,63 +11,76 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.usb.accessory"
-        android:required="true"/>
+        android:required="true" />
 
     <application
         android:name=".MApplication"
         android:allowBackup="true"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/sample_app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
-        android:extractNativeLibs="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
-
-        <!-- DJI SDK -->
-        <uses-library android:name="com.android.future.usb.accessory" />
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
-        <meta-data
-            android:name="com.dji.sdk.API_KEY"
-            android:value="7a85523de7a09402e397d152" />
-
-<!--        <activity-->
-<!--            android:name="dji.sdk.sdkmanager.DJIAoaControllerActivity"-->
-<!--            android:theme="@android:style/Theme.Translucent" >-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />-->
-<!--            </intent-filter>-->
-<!--            <meta-data-->
-<!--                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"-->
-<!--                android:resource="@xml/accessory_filter" />-->
-<!--        </activity>-->
-<!--        <service android:name="dji.sdk.sdkmanager.DJIGlobalService">-->
-<!--        </service>-->
-        <!-- DJI SDK -->
+        <activity
+            android:name=".MissonPlannerActivity"
+            android:screenOrientation="landscape"
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/sample_app_name"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/sample_app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- DJI SDK -->
+        <uses-library android:name="com.android.future.usb.accessory" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.dji.sdk.API_KEY"
+            android:value="7a85523de7a09402e397d152" /> <!-- 启用高德地图服务 -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="10938665774391d943f52d3529eb4746" /> <!-- <activity -->
+        <!-- android:name="dji.sdk.sdkmanager.DJIAoaControllerActivity" -->
+        <!-- android:theme="@android:style/Theme.Translucent" > -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" -->
+        <!-- android:resource="@xml/accessory_filter" /> -->
+        <!-- </activity> -->
+        <!-- <service android:name="dji.sdk.sdkmanager.DJIGlobalService"> -->
+        <!-- </service> -->
+        <!-- DJI SDK -->
+
     </application>
 
 </manifest>
