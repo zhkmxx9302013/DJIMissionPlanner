@@ -5,7 +5,7 @@
 import UIKit
 import DJISDK
 
-class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
+class VirtualSticksViewController: UIViewController, MKMapViewDelegate ,UITextFieldDelegate {
     @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var bearingLabel: UILabel!
     @IBOutlet weak var altitudeLabel: UILabel!
@@ -20,7 +20,9 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
     @IBOutlet weak var fpvRatio: NSLayoutConstraint!
     @IBOutlet weak var remainingChargeSlider: UIProgressView!
     @IBOutlet weak var distanceTrigger: UIProgressView!
-    
+    @IBOutlet weak var maxSpeedTextField: UITextField!
+    @IBOutlet weak var cruiseAltTextField: UITextField!
+    //    @IBOutlet weak var speedTE: UITextField!
     //MARK: MKMapView
     var homeAnnotation = DJIImageAnnotation(identifier: "homeAnnotation")
     var aircraftAnnotation = DJIImageAnnotation(identifier: "aircraftAnnotation")
@@ -87,7 +89,7 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
         super.viewDidLoad()
         
         self.mapView.delegate = self
-        
+//        self.speedTE.delegate = self
         DJIVideoPreviewer.instance()?.start()
         
         self.adapter = VideoPreviewerAdapter.init()
@@ -183,9 +185,17 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
         self.aircraftLocationBefore = self.aircraftLocation
         self.triggerDistance = 0
         
-//        let grid = self.GPSController.star(radius: 50, points: 10, latitude: self.aircraftLocation.latitude, longitude: self.aircraftLocation.longitude,
-//                                           altitude: self.aircraftAltitude, pitch: -90)
-        let grid = self.GPSController.getWayPoints()
+        let altText = self.cruiseAltTextField.text!
+        var cruiseAlt:Double = 30.0
+        if let cruiseAltT = Double(altText){
+            cruiseAlt = cruiseAltT
+        }
+        else{
+            cruiseAlt = 30.0
+        }
+        
+        let grid = self.GPSController.star(radius: 5, points: 10, latitude: self.aircraftLocation.latitude, longitude: self.aircraftLocation.longitude, altitude: cruiseAlt, pitch: -10)
+//        let grid = self.GPSController.getWayPoints()
 //        var msg : String = " "
         
 //        for idx in 0..<grid.count{
@@ -201,8 +211,15 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
                 
             
         self.addWaypoints(grid: grid)
-        
-        self.startVSStarNow(grid: grid, speed: 4)
+        let spdText = self.maxSpeedTextField.text!
+        var maxSpeed:Float = 4.0
+        if let maxSpeedVal = Float(spdText){
+            maxSpeed = maxSpeedVal
+        }
+        else{
+            maxSpeed = 4.0
+        }
+        self.startVSStarNow(grid: grid, speed: maxSpeed)
     }
     
     @IBAction func intervallSwitchAction(_ sender: UISwitch) {
@@ -535,16 +552,20 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
         self.vsSpeed = speed
         
         // Trigger the LED lights
-        self.vsController.frontLed(frontLEDs: false)
+        self.vsController.frontLed(frontLEDs: true)
         
         self.queue.asyncAfter(deadline: .now() + 1.0) {
-
+            
+            var idx : Int = 0
             for mP in grid {
                 let lat = mP[0]
                 let lon = mP[1]
                 let alt = mP[2]
                 let pitch = mP[3]
                 
+                if idx > 0{
+                    self.vsController.frontLed(frontLEDs: true)
+                }
                 if CLLocationCoordinate2DIsValid(CLLocationCoordinate2DMake(lat, lon)) && alt < 250 {
     
                     self.vsTargetLocation.latitude = lat
@@ -562,6 +583,7 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate  {
                     self.vsSpeed = speed
                     self.moveAircraft()
                     if self.GCDProcess == false { break } // Exit point for dispatch group
+                    idx += 1
                     
                 }
             }

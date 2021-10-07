@@ -1,11 +1,15 @@
 //
 //  GPS.swift
 
+import Darwin
+
 
 
 class GPS {
  
     var waypointList : Array = [[Double]]()
+    var radiusWPList: Array = [[Double]]()
+    
     func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
     func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
     
@@ -144,6 +148,41 @@ class GPS {
         return grid
     }
     
+//    func toCartesian(longitude:Double, latitude:Double, altitude:Double) -> [Double]{
+//        var res: Array = [Double]()
+//        let R:Double=6378137.0
+//        var x:Double = R*cos(longitude)*sin(latitude)
+//        var y:Double = R*sin(longitude)*sin(latitude)
+//        var z:Double = R*cos(latitude)
+//        res.append(x)
+//        res.append(y)
+//        res.append(z)
+//        return res
+//    }
+//    
+//    func calcRadiusPath(radius:Double){
+//        var idx:Int = 0
+//        let PI:Double = 3.141592654
+//        for wp in waypointList{
+//            if (idx > 0 && idx < waypointList.count){
+//                let cart0:Array = toCartesian(longitude: waypointList[idx-1][0], latitude: waypointList[idx-1][1], altitude: waypointList[idx-1][2])
+//                let cart1:Array = toCartesian(longitude: waypointList[idx][0], latitude: waypointList[idx][1], altitude: waypointList[idx][2])
+//                let cart2:Array = toCartesian(longitude: waypointList[idx+1][0], latitude: waypointList[idx+1][1], altitude: waypointList[idx+1][2])
+//                var theta = atan2(cart0[0] - cart2[0], cart0[1] - cart2[1]) - atan2(cart1[0]-cart2[0], cart1[1]-cart2[1])
+//                if theta > PI{
+//                    theta -= 2 * PI
+//                }
+//                if theta < -PI{
+//                    theta += 2 * PI
+//                }
+//                
+//                theta = abs(theta * 180.0 / PI)
+//                var s:Double = radius / tan(theta)
+//                
+//            }
+//            idx ++
+//        }
+//    }
     ///
     ///
     ///

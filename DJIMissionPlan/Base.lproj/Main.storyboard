@@ -482,8 +482,8 @@
                         <viewControllerLayoutGuide type="top" id="nh1-iA-vbP"/>
                         <viewControllerLayoutGuide type="bottom" id="CIJ-dV-edz"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="WcZ-Fs-BkQ">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="698"/>
+                    <view key="view" contentMode="scaleToFill" misplaced="YES" id="WcZ-Fs-BkQ">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1000.0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iez-kg-MhE">
@@ -503,7 +503,7 @@
                                     <constraint firstAttribute="height" constant="45" id="Siv-au-MA8"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="航点跟踪任务(GVS)" backgroundImage="btn">
+                                <state key="normal" title="开始跟踪(GVS)" backgroundImage="btn">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
@@ -719,7 +719,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bdT-7D-Jg9" userLabel="fpv">
-                                <rect key="frame" x="30" y="550" width="170.5" height="128"/>
+                                <rect key="frame" x="30" y="556" width="170.5" height="128"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="98s-yK-YXx"/>
@@ -731,24 +731,61 @@
                                 <color key="progressTintColor" systemColor="systemGreenColor"/>
                             </progressView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="NyJ-84-1AL">
-                                <rect key="frame" x="437" y="686" width="150" height="4"/>
+                                <rect key="frame" x="437" y="692" width="150" height="4"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="373-cR-6Ba"/>
                                 </constraints>
                             </progressView>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-Qa-P6g">
-                                <rect key="frame" x="935" y="83" width="51" height="31"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="定时拍照" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ffI-MY-nve">
+                                <rect key="frame" x="845" y="89" width="61.5" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="4.0" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WpV-xT-pMP">
+                                <rect key="frame" x="914" y="121" width="61" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="最大速度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o2K-Oa-KyR">
+                                <rect key="frame" x="844" y="130" width="62" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="巡航高度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eFw-JS-keC">
+                                <rect key="frame" x="844" y="172" width="62" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="130.0" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NUU-uc-FbP">
+                                <rect key="frame" x="914" y="163" width="61" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="转弯半径" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2i7-dp-lz1">
+                                <rect key="frame" x="844" y="215" width="62" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-Qa-P6g">
+                                <rect key="frame" x="920" y="82" width="51" height="31"/>
                                 <color key="onTintColor" systemColor="systemGray2Color"/>
                                 <connections>
                                     <action selector="intervallSwitchAction:" destination="Pxd-4i-Efk" eventType="valueChanged" id="ZmG-aY-apm"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interval Photo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ffI-MY-nve">
-                                <rect key="frame" x="832" y="89.5" width="95" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="2Mi-BG-pkB">
+                                <rect key="frame" x="914" y="210" width="63" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
@@ -792,12 +829,14 @@
                     <connections>
                         <outlet property="altitudeLabel" destination="37G-Pv-4DU" id="yB7-pf-F3f"/>
                         <outlet property="bearingLabel" destination="yyt-9t-wN5" id="N2m-zb-Qec"/>
+                        <outlet property="cruiseAltTextField" destination="NUU-uc-FbP" id="Frr-T1-uSz"/>
                         <outlet property="distanceLabel" destination="Ef8-Sz-0a9" id="Eoe-1t-8tb"/>
                         <outlet property="distanceTrigger" destination="NyJ-84-1AL" id="O6K-01-XQf"/>
                         <outlet property="fpvRatio" destination="WXU-Qq-voz" id="iKr-wn-Aqv"/>
                         <outlet property="fpvView" destination="bdT-7D-Jg9" id="GHY-n7-X90"/>
                         <outlet property="gimbalPitchLabel" destination="Es5-1J-neQ" id="Z98-O7-lbj"/>
                         <outlet property="mapView" destination="4WQ-iv-XBl" id="TXE-oD-IdW"/>
+                        <outlet property="maxSpeedTextField" destination="WpV-xT-pMP" id="HtN-7z-gx7"/>
                         <outlet property="missionButton" destination="P21-oD-JDj" id="mwF-xK-QF3"/>
                         <outlet property="remainingChargeSlider" destination="fKV-lt-F61" id="XAZ-dt-2fg"/>
                         <outlet property="speedLabel" destination="ePf-jy-Iqb" id="i7z-NQ-8Lx"/>
