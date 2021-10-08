@@ -22,6 +22,7 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate ,UITextFi
     @IBOutlet weak var distanceTrigger: UIProgressView!
     @IBOutlet weak var maxSpeedTextField: UITextField!
     @IBOutlet weak var cruiseAltTextField: UITextField!
+    @IBOutlet weak var pointRangeTextField: UITextField!
     //    @IBOutlet weak var speedTE: UITextField!
     //MARK: MKMapView
     var homeAnnotation = DJIImageAnnotation(identifier: "homeAnnotation")
@@ -194,7 +195,16 @@ class VirtualSticksViewController: UIViewController, MKMapViewDelegate ,UITextFi
             cruiseAlt = 30.0
         }
         
-        let grid = self.GPSController.star(radius: 5, points: 10, latitude: self.aircraftLocation.latitude, longitude: self.aircraftLocation.longitude, altitude: cruiseAlt, pitch: -10)
+        let pRngText = self.pointRangeTextField.text!
+        var pRng:Double = 5.0
+        if let pRngT = Double(pRngText){
+            pRng = pRngT
+        }
+        else{
+            pRng = 5.0
+        }
+        
+        let grid = self.GPSController.star(radius: pRng, points: 10, latitude: self.aircraftLocation.latitude, longitude: self.aircraftLocation.longitude, altitude: cruiseAlt, pitch: -10)
 //        let grid = self.GPSController.getWayPoints()
 //        var msg : String = " "
         

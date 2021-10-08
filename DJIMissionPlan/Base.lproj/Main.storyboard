@@ -5,6 +5,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="UIMenu" message="Requires Xcode 11 or later." minToolsVersion="11.0" requiredIntegratedClassName="UICommandDiff"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -474,7 +475,7 @@
             </objects>
             <point key="canvasLocation" x="2564" y="611"/>
         </scene>
-        <!--Virtual Stick Mission-->
+        <!--Virtual Stick 航点跟踪任务-->
         <scene sceneID="ZlV-3b-AZo">
             <objects>
                 <viewController id="Pxd-4i-Efk" customClass="VirtualSticksViewController" customModule="DJIMissionPlan" customModuleProvider="target" sceneMemberID="viewController">
@@ -482,8 +483,8 @@
                         <viewControllerLayoutGuide type="top" id="nh1-iA-vbP"/>
                         <viewControllerLayoutGuide type="bottom" id="CIJ-dV-edz"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" misplaced="YES" id="WcZ-Fs-BkQ">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="704"/>
+                    <view key="view" contentMode="scaleToFill" id="WcZ-Fs-BkQ">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="698"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1000.0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iez-kg-MhE">
@@ -719,7 +720,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bdT-7D-Jg9" userLabel="fpv">
-                                <rect key="frame" x="30" y="556" width="170.5" height="128"/>
+                                <rect key="frame" x="30" y="550" width="170.5" height="128"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="98s-yK-YXx"/>
@@ -731,14 +732,14 @@
                                 <color key="progressTintColor" systemColor="systemGreenColor"/>
                             </progressView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="NyJ-84-1AL">
-                                <rect key="frame" x="437" y="692" width="150" height="4"/>
+                                <rect key="frame" x="437" y="686" width="150" height="4"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="373-cR-6Ba"/>
                                 </constraints>
                             </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="定时拍照" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ffI-MY-nve">
-                                <rect key="frame" x="845" y="89" width="61.5" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="航点扫描(FPV -90)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ffI-MY-nve">
+                                <rect key="frame" x="808" y="88" width="110" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -755,14 +756,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="巡航高度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eFw-JS-keC">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="期望高度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eFw-JS-keC">
                                 <rect key="frame" x="844" y="172" width="62" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="130.0" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NUU-uc-FbP">
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="30.0" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NUU-uc-FbP">
                                 <rect key="frame" x="914" y="163" width="61" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -775,17 +776,53 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="2Mi-BG-pkB">
+                                <rect key="frame" x="914" y="210" width="63" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </slider>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="BLG-Qa-P6g">
-                                <rect key="frame" x="920" y="82" width="51" height="31"/>
+                                <rect key="frame" x="926" y="82" width="51" height="31"/>
+                                <rect key="contentStretch" x="0.0" y="0.0" width="0.65000000000000002" height="0.0"/>
                                 <color key="onTintColor" systemColor="systemGray2Color"/>
                                 <connections>
                                     <action selector="intervallSwitchAction:" destination="Pxd-4i-Efk" eventType="valueChanged" id="ZmG-aY-apm"/>
                                 </connections>
                             </switch>
-                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="2Mi-BG-pkB">
-                                <rect key="frame" x="914" y="210" width="63" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="飞行计划" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Wt-Vl-wH3">
+                                <rect key="frame" x="844" y="254" width="62" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </slider>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Q3-JW-9JI">
+                                <rect key="frame" x="916" y="248" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <menu key="menu" id="qBo-ag-KjY">
+                                    <children>
+                                        <command title="Item 1" id="cKB-Pc-LVR"/>
+                                        <command title="Item 2" id="oS9-e3-s1L"/>
+                                    </children>
+                                </menu>
+                                <state key="normal" title="五星5m">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="布撒范围" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gev-bE-SJ3">
+                                <rect key="frame" x="844" y="293" width="62" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="5" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wN9-4L-XLd">
+                                <rect key="frame" x="914" y="285" width="61" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
@@ -825,7 +862,7 @@
                             <constraint firstItem="az2-eS-rLC" firstAttribute="top" secondItem="Ggf-eZ-fUK" secondAttribute="top" id="z3h-jb-Tbv"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Virtual Stick Mission" id="rra-jv-ftx"/>
+                    <navigationItem key="navigationItem" title="Virtual Stick 航点跟踪任务" id="rra-jv-ftx"/>
                     <connections>
                         <outlet property="altitudeLabel" destination="37G-Pv-4DU" id="yB7-pf-F3f"/>
                         <outlet property="bearingLabel" destination="yyt-9t-wN5" id="N2m-zb-Qec"/>
@@ -838,6 +875,7 @@
                         <outlet property="mapView" destination="4WQ-iv-XBl" id="TXE-oD-IdW"/>
                         <outlet property="maxSpeedTextField" destination="WpV-xT-pMP" id="HtN-7z-gx7"/>
                         <outlet property="missionButton" destination="P21-oD-JDj" id="mwF-xK-QF3"/>
+                        <outlet property="pointRangeTextField" destination="wN9-4L-XLd" id="rZA-hh-HLL"/>
                         <outlet property="remainingChargeSlider" destination="fKV-lt-F61" id="XAZ-dt-2fg"/>
                         <outlet property="speedLabel" destination="ePf-jy-Iqb" id="i7z-NQ-8Lx"/>
                         <outlet property="xLabel" destination="Kqz-7O-9XV" id="kao-CT-Rbv"/>
