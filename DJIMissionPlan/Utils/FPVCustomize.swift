@@ -312,4 +312,5 @@ class FPVCustomizationWidget: DUXBetaListItemTitleWidget {
         trailingMarginConstraint = trailingTitleGuide.rightAnchor.constraint(equalTo: view.rightAnchor)
         trailingMarginConstraint.isActive = true
     }
+    
 }
