@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		238F549224D381B900B84EA3 /* VirtualSticksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 238F549124D381B900B84EA3 /* VirtualSticksViewController.swift */; };
+		2617E28F271B306500D54BC9 /* FPVCustomize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2617E28E271B306500D54BC9 /* FPVCustomize.swift */; };
 		2F0FC85D21EDC06100D1C635 /* VideoPreviewerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0FC85C21EDC06100D1C635 /* VideoPreviewerAdapter.swift */; };
 		2F0FC85F21EDC81C00D1C635 /* CameraFPVViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0FC85E21EDC81C00D1C635 /* CameraFPVViewController.swift */; };
 		2F0FC86E21EE1D0300D1C635 /* DecodeImageCalibrateLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0FC86D21EE1D0300D1C635 /* DecodeImageCalibrateLogic.swift */; };
@@ -16,6 +17,7 @@
 		39A7A4D5257E5B62000FB077 /* VirtualSticksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A7A4D4257E5B62000FB077 /* VirtualSticksController.swift */; };
 		39A7A4D8257E74CE000FB077 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A7A4D7257E74CE000FB077 /* CameraController.swift */; };
 		51AAFCD221FEB35900742997 /* DJIAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AAFCD121FEB35900742997 /* DJIAlert.swift */; };
+		6F141CE0688DBDAC15939E25 /* Pods_DJIMissionPlan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966CD95B91470BCD36BA45EE /* Pods_DJIMissionPlan.framework */; };
 		A402788320AD473E0072809B /* FlightHubViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402788220AD473E0072809B /* FlightHubViewController.swift */; };
 		A47868D7209AC6DA00DBC666 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A47868C5209AC6DA00DBC666 /* AppDelegate.swift */; };
 		A47868D8209AC6DA00DBC666 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A47868C6209AC6DA00DBC666 /* Assets.xcassets */; };
@@ -30,11 +32,11 @@
 		A47868E2209AC6DA00DBC666 /* DJIImageAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A47868D6209AC6DA00DBC666 /* DJIImageAnnotation.swift */; };
 		D8A8ADA12709EB390049A106 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		D8DD22B4270C8DBD008FA1B8 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD22B3270C8DBD008FA1B8 /* Utils.swift */; };
-		DCFE8B7F158AFEAC1B9D8124 /* libPods-DJIMissionPlan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5BA26C0CDC4E1CDFA66999 /* libPods-DJIMissionPlan.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		238F549124D381B900B84EA3 /* VirtualSticksViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VirtualSticksViewController.swift; path = VirtualSticks/VirtualSticksViewController.swift; sourceTree = "<group>"; };
+		2617E28E271B306500D54BC9 /* FPVCustomize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FPVCustomize.swift; sourceTree = "<group>"; };
 		2F0FC85C21EDC06100D1C635 /* VideoPreviewerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewerAdapter.swift; sourceTree = "<group>"; };
 		2F0FC85E21EDC81C00D1C635 /* CameraFPVViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFPVViewController.swift; sourceTree = "<group>"; };
 		2F0FC86A21EDFFEE00D1C635 /* DJIWidget-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DJIWidget-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -46,6 +48,7 @@
 		51AAFCD121FEB35900742997 /* DJIAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DJIAlert.swift; sourceTree = "<group>"; };
 		72614D62040F11732472B563 /* Pods-DJIMissionPlan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DJIMissionPlan.release.xcconfig"; path = "Target Support Files/Pods-DJIMissionPlan/Pods-DJIMissionPlan.release.xcconfig"; sourceTree = "<group>"; };
 		86985CC91E834EC200577EC7 /* DJIMissionPlan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DJIMissionPlan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		966CD95B91470BCD36BA45EE /* Pods_DJIMissionPlan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DJIMissionPlan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A402788220AD473E0072809B /* FlightHubViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlightHubViewController.swift; sourceTree = "<group>"; };
 		A47868C5209AC6DA00DBC666 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A47868C6209AC6DA00DBC666 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -60,7 +63,6 @@
 		A47868D4209AC6DA00DBC666 /* StartupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		A47868D6209AC6DA00DBC666 /* DJIImageAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DJIImageAnnotation.swift; sourceTree = "<group>"; };
 		B449A8EDC278891D55FB0169 /* Pods-DJIMissionPlan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DJIMissionPlan.debug.xcconfig"; path = "Target Support Files/Pods-DJIMissionPlan/Pods-DJIMissionPlan.debug.xcconfig"; sourceTree = "<group>"; };
-		CB5BA26C0CDC4E1CDFA66999 /* libPods-DJIMissionPlan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DJIMissionPlan.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8DD22B3270C8DBD008FA1B8 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,7 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DCFE8B7F158AFEAC1B9D8124 /* libPods-DJIMissionPlan.a in Frameworks */,
+				6F141CE0688DBDAC15939E25 /* Pods_DJIMissionPlan.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +119,7 @@
 		772169E94E0DA48803D43E4C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB5BA26C0CDC4E1CDFA66999 /* libPods-DJIMissionPlan.a */,
+				966CD95B91470BCD36BA45EE /* Pods_DJIMissionPlan.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				D8DD22B3270C8DBD008FA1B8 /* Utils.swift */,
+				2617E28E271B306500D54BC9 /* FPVCustomize.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 				A47868DD209AC6DA00DBC666 /* KeyedInterfaceViewController.swift in Sources */,
 				A47868DF209AC6DA00DBC666 /* TimelineMissionViewController.swift in Sources */,
 				2F0FC86E21EE1D0300D1C635 /* DecodeImageCalibrateLogic.swift in Sources */,
+				2617E28F271B306500D54BC9 /* FPVCustomize.swift in Sources */,
 				2F0FC85F21EDC81C00D1C635 /* CameraFPVViewController.swift in Sources */,
 				39A7A4D8257E74CE000FB077 /* CameraController.swift in Sources */,
 				3945144A24E1D01E00F1319B /* GPS.swift in Sources */,
@@ -538,6 +542,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACH_O_TYPE = mh_execute;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = ch.zhkmxx930.djimsplan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -569,6 +574,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACH_O_TYPE = mh_execute;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = ch.zhkmxx930.djimsplan;
 				PRODUCT_NAME = "$(TARGET_NAME)";

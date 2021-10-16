@@ -8,200 +8,336 @@
 
 import UIKit
 import DJISDK
+import DJIUXSDKBeta
 
 class KeyedInterfaceViewController: UIViewController {
     
-    var cameraStorageLocation: DJICameraStorageLocation = .unknown
+    var appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let rootView = UIView()
+    var topBar: DUXBetaBarPanelWidget?
+    var remainingFlightTimeWidget: DUXBetaRemainingFlightTimeWidget?
+    var fpvWidget: DUXBetaFPVWidget?
+    var compassWidget: DUXBetaCompassWidget?
+    var telemetryPanel: DUXBetaTelemetryPanelWidget?
+    var systemStatusListPanel: DUXBetaListPanelWidget?
+    var fpvCustomizationPanel: DUXBetaListPanelWidget?
+    var currentMainViewWidget : DUXBetaBaseWidget?
 
+    override var prefersStatusBarHidden: Bool { return true }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let cameraStorageLocationKey = DJICameraKey(param: DJICameraParamStorageLocation) {
-            DJISDKManager.keyManager()?.getValueFor(cameraStorageLocationKey, withCompletion: { (value: DJIKeyedValue?, error: Error?) in
-                guard error == nil && value != nil else {
-                    // Insert graceful error handling here.
-                    
-                    self.cameraStorageLocationLabel.text = "Error"
-                    return
-                }
-                
-                self.cameraStorageLocation = DJICameraStorageLocation(rawValue: (value?.value as! NSNumber).uintValue)!
-                
-                if self.cameraStorageLocation == .sdCard {
-                    self.cameraStorageLocationLabel.text = "SD Card"
-                } else if self.cameraStorageLocation == .internalStorage {
-                    self.cameraStorageLocationLabel.text = "Internal Storage"
-                } else {
-                    self.cameraStorageLocationLabel.text = "Uknown"
-                }
-            })
-        }
-        //We need to get the product type then listen for changes on the product type to determine if we should show the UI for SDCard and Internal Storage which is only supported on Mavic Air.
-        if let productKey = DJIProductKey.modelName() {
-            
-            DJISDKManager.keyManager()?.getValueFor(productKey, withCompletion: { (value: DJIKeyedValue?, error: Error?) in
-                guard error == nil && value != nil else {
-                    // Insert graceful error handling here.
-                    return
-                }
-                if let productName = value?.stringValue {
-                    self.changeUIForProduct(productName: productName)
-                }
-            })
-            
-            DJISDKManager.keyManager()?.startListeningForChanges(on: productKey, withListener: self, andUpdate: { (oldValue: DJIKeyedValue?, newValue: DJIKeyedValue?) in
-                
-                if let productName = newValue?.stringValue {
-                    self.changeUIForProduct(productName: productName)
-                }
-            })
-        }
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func changeUIForProduct(productName: String) {
-        if productName != DJIAircraftModelNameMavicAir {
-            self.cameraStorageLocationLabel.isHidden = true
-            self.toggleCameraStorageLocationButton.isHidden = true
+        view.addSubview(rootView)
+        
+        view.backgroundColor = UIColor.uxsdk_black()
+        
+        rootView.translatesAutoresizingMaskIntoConstraints = false
+        let statusBarInsets = UIApplication.shared.keyWindow!.safeAreaInsets
+        var edgeInsets: UIEdgeInsets
+        if #available(iOS 11, * ) {
+            edgeInsets = view.safeAreaInsets
+            edgeInsets.top += statusBarInsets.top
+            edgeInsets.left += statusBarInsets.left
+            edgeInsets.bottom += statusBarInsets.bottom
+            edgeInsets.right += statusBarInsets.right
         } else {
-            self.cameraStorageLocationLabel.isHidden = false
-            self.toggleCameraStorageLocationButton.isHidden = false
+            edgeInsets = UIEdgeInsets(top: statusBarInsets.top, left: statusBarInsets.left, bottom: statusBarInsets.bottom, right: statusBarInsets.right)
+        }
+        
+        rootView.topAnchor.constraint(equalTo:view.topAnchor, constant:edgeInsets.top).isActive = true
+        rootView.leftAnchor.constraint(equalTo:view.leftAnchor, constant:edgeInsets.left).isActive = true
+        rootView.bottomAnchor.constraint(equalTo:view.bottomAnchor, constant:-edgeInsets.bottom).isActive = true
+        rootView.rightAnchor.constraint(equalTo:view.rightAnchor, constant:-edgeInsets.right).isActive = true
+
+        setupTopBar()
+        setupFPVWidget()
+        setupTelemetryPanel()
+        setupRemainingFlightTimeWidget()
+        setupRTKWidget()
+        setupLeftPanel()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        DUXBetaStateChangeBroadcaster.instance().unregisterListener(self)
+        
+        super.viewDidDisappear(animated)
+    }
+    
+    @IBAction func close () {
+        dismiss(animated: true) {
+            DJISDKManager.keyManager()?.stopAllListening(ofListeners: self)
         }
     }
-    
-    @IBOutlet weak var getBatteryLevelButton: UIButton!
-    @IBOutlet weak var getBatteryLevelLabel: UILabel!
-    @IBAction func getBatteryLevel(_ sender: Any) {
-        let batteryLevelKey = DJIBatteryKey(param: DJIBatteryParamChargeRemainingInPercent)
-        DJISDKManager.keyManager()?.getValueFor(batteryLevelKey!, withCompletion: { [unowned self] (value: DJIKeyedValue?, error: Error?) in
-            guard error == nil && value != nil else {
-                // Insert graceful error handling here
+        
+    // Method for setting up the top bar. We may want to refactor this into another file at some point
+    // but for now, let's use this as out basic playground file. We are designing for lower complexity
+    // if possible than having multiple view containers defined in other classes and getting attached.
+    func setupTopBar() {
+        let topBarWidget = DUXBetaTopBarWidget()
+        
+        let logoBtn = UIButton()
+        logoBtn.translatesAutoresizingMaskIntoConstraints = false
+        logoBtn.setImage(UIImage.init(named: "Close"), for: .normal)
+        logoBtn.imageView?.contentMode = .scaleAspectFit
+        logoBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
+        view.addSubview(logoBtn)
                 
-                self.getBatteryLevelLabel.text = "Error";
-                return
-            }
-            // DJIBatteryParamChargeRemainingInPercent is associated with a uint8_t value
-            self.getBatteryLevelLabel.text = "\(value!.unsignedIntegerValue) %"
-        })
-    }
-    
-    @IBOutlet weak var setCameraModeButton: UIButton!
-    @IBOutlet weak var setCameraModeLabel: UILabel!
-    @IBAction func setCameraMode(_ sender: Any) {
-        if let cameraModeKey = DJICameraKey(param: DJICameraParamMode) {
-            if let keyManager = DJISDKManager.keyManager() {
-                var currentMode = DJICameraMode.shootPhoto // Default value.
-                var newMode = DJICameraMode.recordVideo
-                
-                // Sometimes you want to get the value that is cached inside the keyed interface rather
-                // than fetching it from the connected product. To do so, you may call getValueForKey:
-                if let currentCameraMode = keyManager.getValueFor(cameraModeKey) {
-                    currentMode = DJICameraMode(rawValue: (currentCameraMode.value as! NSNumber).uintValue)!
-                    if currentMode == .recordVideo {
-                        newMode = .shootPhoto
+        let customizationsBtn = UIButton()
+        customizationsBtn.translatesAutoresizingMaskIntoConstraints = false
+        customizationsBtn.setImage(UIImage.init(named: "Wrench"), for: .normal)
+        customizationsBtn.imageView?.contentMode = .scaleAspectFit
+        customizationsBtn.addTarget(self, action: #selector(setupFPVCustomizationPanel), for: .touchUpInside)
+        view.addSubview(customizationsBtn)
+        
+        topBarWidget.install(in: self)
+        
+        let margin: CGFloat = 5.0
+        let height: CGFloat = 28.0
+        NSLayoutConstraint.activate([
+            logoBtn.leftAnchor.constraint(equalTo: rootView.leftAnchor),
+            logoBtn.topAnchor.constraint(equalTo: rootView.topAnchor, constant: margin),
+            logoBtn.heightAnchor.constraint(equalToConstant: height - 2 * margin),
+          
+            topBarWidget.view.trailingAnchor.constraint(equalTo: customizationsBtn.leadingAnchor),
+            topBarWidget.view.leadingAnchor.constraint(equalTo: logoBtn.trailingAnchor),
+            topBarWidget.view.topAnchor.constraint(equalTo: rootView.topAnchor),
+            topBarWidget.view.heightAnchor.constraint(equalToConstant: height),
+            
+            customizationsBtn.topAnchor.constraint(equalTo: rootView.topAnchor, constant: margin),
+            customizationsBtn.heightAnchor.constraint(equalToConstant: height - 2 * margin),
+            customizationsBtn.rightAnchor.constraint(equalTo: rootView.rightAnchor)
+        ])
+        
+        topBar = topBarWidget
+        topBar?.topMargin = margin
+        topBar?.rightMargin = margin
+        topBar?.bottomMargin = margin
+        topBar?.leftMargin = margin
+
+        DUXBetaStateChangeBroadcaster.instance().registerListener(self, analyticsClassName: "SystemStatusUIState") { [weak self] (analyticsData) in
+            DispatchQueue.main.async {
+                if let weakSelf = self {
+                    if let list = weakSelf.systemStatusListPanel {
+                        list.closeTapped()
+                        weakSelf.systemStatusListPanel = nil
+                    } else {
+                        weakSelf.setupSystemStatusList()
                     }
                 }
-                
-                keyManager.setValue(NSNumber(value:newMode.rawValue),
-                                             for: cameraModeKey, withCompletion: { (error: Error?) in
-                guard error == nil else {
-                    // Insert here more graceful error handling.
-                    self.setCameraModeLabel.text = error?.localizedDescription
-                    return
-                }
-                
-                self.setCameraModeLabel.text = newMode == DJICameraMode.shootPhoto ? "DJICameraModeShootPhoto" : "DJICameraModeRecordVideo";
-                })
             }
         }
     }
     
-    
-    @IBOutlet weak var listeningCoordinatesButton: UIButton!
-    @IBOutlet weak var listeningCoordinatesLabel: UILabel!
+    func setupRemainingFlightTimeWidget() {
+        let remainingFlightTimeWidget = DUXBetaRemainingFlightTimeWidget()
+        
+        remainingFlightTimeWidget.install(in: self)
+        
+        NSLayoutConstraint.activate([
+            remainingFlightTimeWidget.view.leftAnchor.constraint(equalTo: view.leftAnchor),
+            remainingFlightTimeWidget.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+            remainingFlightTimeWidget.view.centerYAnchor.constraint(equalTo: topBar?.view.bottomAnchor ?? rootView.topAnchor, constant: 3.0)
+        ])
 
-    var isListening = false
-    
-    @IBAction func startStopListeningCoordinates(_ sender: Any) {
-        let locationKey = DJIFlightControllerKey(param: DJIFlightControllerParamAircraftLocation)
-        
-        if isListening {
-            // At anytime, you may stop listening to a key or to all key for a given listener
-            DJISDKManager.keyManager()?.stopListening(on: locationKey!, ofListener: self)
-            self.listeningCoordinatesLabel.text = "Stopped";
-        } else {
-            // Start listening is as easy as passing a block with a key.
-            // Note that start listening won't do a get. Your block will be executed
-            // the next time the associated data is being pulled.
-            DJISDKManager.keyManager()?.startListeningForChanges(on: locationKey!, withListener: self, andUpdate: { (oldValue: DJIKeyedValue?, newValue: DJIKeyedValue?) in
-                if newValue != nil {
-                    // DJIFlightControllerParamAircraftLocation is associated with a DJISDKLocation object
-                    let aircraftCoordinates = newValue!.value! as! CLLocation
-                    
-                    self.listeningCoordinatesLabel.text = "Lat: \(aircraftCoordinates.coordinate.latitude) - Long: \(aircraftCoordinates.coordinate.longitude)"
-                }
-            })
-            self.listeningCoordinatesLabel.text = "Started...";
-        }
-        isListening = !isListening
+        self.remainingFlightTimeWidget = remainingFlightTimeWidget
     }
     
-    @IBOutlet weak var getExposureSettingsButton: UIButton!
-    @IBOutlet weak var getExposureSettingsLabel: UILabel!
-    @IBAction func getExposureSettings(_ sender: Any) {
-        let exposureKey = DJICameraKey(param: DJICameraParamExposureSettings)
+    func setupLeftPanel() {
+        let leftBarWidget = DUXBetaFreeformPanelWidget()
+        var configuration = DUXBetaPanelWidgetConfiguration(type: .freeform, variant: .freeform)
+        configuration = configuration.configureColors(background: .uxsdk_clear())
+        _ = leftBarWidget.configure(configuration)
         
-        DJISDKManager.keyManager()?.getValueFor(exposureKey!, withCompletion: { (value: DJIKeyedValue?, error: Error?) in
-            guard error == nil && value != nil else {
-                // Insert graceful error handling here.
-            
-                self.getExposureSettingsLabel.text = "Error"
-                return
+        leftBarWidget.install(in: self)
+
+        NSLayoutConstraint.activate([
+            leftBarWidget.view.topAnchor.constraint(equalTo: topBar?.view.bottomAnchor ?? rootView.topAnchor),
+            leftBarWidget.view.bottomAnchor.constraint(equalTo: telemetryPanel?.view.topAnchor ?? rootView.bottomAnchor),
+            leftBarWidget.view.leftAnchor.constraint(equalTo: (compassWidget?.view ?? rootView).leftAnchor),
+            leftBarWidget.view.rightAnchor.constraint(equalTo: rootView.leftAnchor, constant: 64.0)
+        ])
+        
+        let newPanes = leftBarWidget.splitPane(leftBarWidget.rootPane(), along: .vertical, proportions: [0.25, 0.25, 0.25, 0.25])
+
+        DUXBetaTakeOffWidget().install(in: leftBarWidget, pane: newPanes[1], position: .centered)
+        DUXBetaReturnHomeWidget().install(in: leftBarWidget, pane: newPanes[2], position: .centered)
+    }
+    
+    func setupSystemStatusList() {
+        let listPanel = DUXBetaSystemStatusListWidget()
+        listPanel.onCloseTapped( { [weak self] listPanel in
+            guard let self = self else { return }
+            if listPanel == self.systemStatusListPanel {
+                self.systemStatusListPanel = nil
             }
-            
-            // DJICameraParamExposureSettings is associated with DJICameraExposureSettings struct.
-            // Structs are stored inside an NSValue when carried by a DJIKeyedValue object.
-            var exposureSettings = DJICameraExposureSettings()
-            
-            let nsvalue = value!.value as! NSValue
-            nsvalue.getValue(&exposureSettings)
-            
-            self.getExposureSettingsLabel.text = "ISO: \(exposureSettings.ISO)\nAperture: \(exposureSettings.aperture.rawValue)\nEV: \(exposureSettings.exposureCompensation.rawValue)\nShutter:\(exposureSettings.shutterSpeed.rawValue)"
         })
+        listPanel.install(in: self) // Very important to use this method
         
+        listPanel.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        listPanel.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        listPanel.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier:0.6).isActive = true
+        listPanel.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        systemStatusListPanel = listPanel
     }
     
-    @IBOutlet weak var cameraStorageLocationLabel: UILabel!
+    func setupMainViewConstraints(widget: DUXBetaBaseWidget) {
+        NSLayoutConstraint.activate([
+            widget.view.topAnchor.constraint(equalTo: topBar?.view.bottomAnchor ?? view.topAnchor),
+            widget.view.leftAnchor.constraint(equalTo: view.leftAnchor),
+            widget.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+            widget.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
     
-    @IBOutlet weak var toggleCameraStorageLocationButton: UIButton!
-    @IBAction func toggleCameraStorageLocationPressed(_ sender: Any) {
-        let newCameraStorageLocation:DJICameraStorageLocation
-        if self.cameraStorageLocation == .sdCard {
-            newCameraStorageLocation = .internalStorage
+    func setupFPVWidget() {
+        let fpvWidget = DUXBetaFPVWidget()
+        
+        fpvWidget.install(in: self)
+        
+        setupMainViewConstraints(widget: fpvWidget)
+        
+        self.fpvWidget = fpvWidget
+        currentMainViewWidget = fpvWidget
+
+    }
+    
+    func setupRTKWidget() {
+        let rtkWidget = DUXBetaRTKWidget()
+        rtkWidget.view.translatesAutoresizingMaskIntoConstraints = false
+        rtkWidget.install(in: self)
+        
+        if let topBar = topBar {
+            rtkWidget.view.topAnchor.constraint(equalTo: topBar.view.bottomAnchor).isActive = true
         } else {
-            newCameraStorageLocation = .sdCard
+            rtkWidget.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 44.0).isActive = true
         }
-        if let cameraStorageLocationKey = DJICameraKey(param: DJICameraParamStorageLocation) {
-            DJISDKManager.keyManager()?.setValue(NSNumber(value:newCameraStorageLocation.rawValue), for: cameraStorageLocationKey, withCompletion: { (error: Error?) in
-                guard error == nil else {
-                    // Insert graceful error handling here.
-                    self.cameraStorageLocationLabel.text = "Error"
-                    return
-                }
-                self.cameraStorageLocation = newCameraStorageLocation
-                if self.cameraStorageLocation == .sdCard {
-                    self.cameraStorageLocationLabel.text = "SD Card"
-                } else if self.cameraStorageLocation == .internalStorage {
-                    self.cameraStorageLocationLabel.text = "Internal Storage"
-                } else {
-                    self.cameraStorageLocationLabel.text = "Uknown"
-                }
-            })
+        if let telemetryPanel = telemetryPanel {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                rtkWidget.view.bottomAnchor.constraint(equalTo: telemetryPanel.view.bottomAnchor).isActive = true
+            } else {
+                rtkWidget.view.bottomAnchor.constraint(equalTo: telemetryPanel.view.topAnchor).isActive = true
+            }
+        } else {
+            rtkWidget.view.bottomAnchor.constraint(equalTo: view.topAnchor).isActive = true
         }
+        rtkWidget.view.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
+    func setupTelemetryPanel() {
+        let compassWidget = DUXBetaCompassWidget()
+        let telemetryPanel = DUXBetaTelemetryPanelWidget()
+        var configuration = DUXBetaPanelWidgetConfiguration(type: .freeform, variant: .freeform)
+        configuration = configuration.configureColors(background: .uxsdk_clear())
+        _ = telemetryPanel.configure(configuration)
+        
+        let leftMarginLayoutGuide = UILayoutGuide.init()
+        view.addLayoutGuide(leftMarginLayoutGuide)
+        
+        let bottomMarginLayoutGuide = UILayoutGuide.init()
+        view.addLayoutGuide(bottomMarginLayoutGuide)
+        
+        compassWidget.install(in: self)
+        telemetryPanel.install(in: self)
+        
+        let backgroundView = telemetryPanel.backgroundViewForPane(0)
+        backgroundView?.backgroundColor = .uxsdk_blackAlpha50()
+        backgroundView?.layer.cornerRadius = 5.0
+        
+        NSLayoutConstraint.activate([
+            leftMarginLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.015),
+            leftMarginLayoutGuide.leftAnchor.constraint(equalTo: view.leftAnchor),
+            leftMarginLayoutGuide.rightAnchor.constraint(equalTo: compassWidget.view.leftAnchor),
+            
+            bottomMarginLayoutGuide.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.04),
+            bottomMarginLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomMarginLayoutGuide.topAnchor.constraint(equalTo: compassWidget.view.bottomAnchor),
+            
+            compassWidget.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.116),
+            compassWidget.view.widthAnchor.constraint(equalTo: compassWidget.view.heightAnchor, multiplier: compassWidget.widgetSizeHint.preferredAspectRatio),
+            
+            telemetryPanel.view.leftAnchor.constraint(equalTo: compassWidget.view.rightAnchor),
+            telemetryPanel.view.centerYAnchor.constraint(equalTo: compassWidget.view.centerYAnchor),
+            telemetryPanel.view.heightAnchor.constraint(equalTo: compassWidget.view.heightAnchor, multiplier: 1.2),
+            telemetryPanel.view.widthAnchor.constraint(equalTo: telemetryPanel.view.heightAnchor,
+                                                     multiplier: telemetryPanel.widgetSizeHint.preferredAspectRatio)
+        ])
+        
+        self.compassWidget = compassWidget
+        self.telemetryPanel = telemetryPanel
+    }
+    
+    @objc func setupFPVCustomizationPanel() {
+        if let _ = fpvCustomizationPanel {
+            fpvCustomizationPanel?.closeTapped()
+        }
+        
+        let listPanel = DUXBetaListPanelWidget()
+        _ = listPanel.configure(DUXBetaPanelWidgetConfiguration(type: .list, listKind: .widgets)
+            .configureTitlebar(visible: true, withCloseBox: true, title: "FPV Customizations"))
+
+        listPanel.onCloseTapped({ [weak self] inPanel in
+            guard let self = self else { return }
+            self.fpvCustomizationPanel = nil;
+        })
+        listPanel.install(in: self)
+        
+        NSLayoutConstraint.activate([
+            listPanel.view.heightAnchor.constraint(greaterThanOrEqualToConstant: listPanel.widgetSizeHint.minimumHeight),
+            listPanel.view.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.7),
+            listPanel.view.widthAnchor.constraint(greaterThanOrEqualToConstant: listPanel.widgetSizeHint.minimumWidth),
+            listPanel.view.topAnchor.constraint(equalTo: topBar?.view.bottomAnchor ?? view.topAnchor),
+            listPanel.view.rightAnchor.constraint(equalTo: rootView.rightAnchor)
+        ])
+
+        let cameraNameVisibility = FPVCameraNameVisibilityWidget()
+        cameraNameVisibility.setTitle("Camera Name Visibility", andIconName: nil)
+        cameraNameVisibility.fpvWidget = fpvWidget
+        
+        let cameraSideVisibility = FPVCameraSideVisibilityWidget()
+        cameraSideVisibility.setTitle("Camera Side Visibility", andIconName: nil)
+        cameraSideVisibility.fpvWidget = fpvWidget
+        
+        let gridlinesVisibility = FPVGridlineVisibilityWidget()
+        gridlinesVisibility.setTitle("Gridlines Visibility", andIconName: nil)
+        gridlinesVisibility.fpvWidget = fpvWidget
+        
+        let gridlinesType = FPVGridlineTypeWidget()
+        gridlinesType.setTitle("Gridlines Type", andIconName: nil)
+        gridlinesType.fpvWidget = fpvWidget
+        
+        let centerImageVisibility = FPVCenterViewVisibilityWidget()
+        centerImageVisibility.setTitle("CenterPoint Visibility", andIconName: nil)
+        centerImageVisibility.fpvWidget = fpvWidget
+        
+        let centerImageType = FPVCenterViewTypeWidget()
+        centerImageType.setTitle("CenterPoint Type", andIconName: nil)
+        centerImageType.fpvWidget = fpvWidget
+        
+        let centerImageColor = FPVCenterViewColorWidget()
+        centerImageColor.setTitle("CenterPoint Color", andIconName: nil)
+        centerImageColor.fpvWidget = fpvWidget
+        
+        let hardwareDecodeWidget = DUXBetaListItemSwitchWidget()
+        hardwareDecodeWidget.setTitle("Enable Hardware Decode", andIconName: nil)
+        hardwareDecodeWidget.onOffSwitch.isOn = fpvWidget?.enableHardwareDecode ?? false
+        hardwareDecodeWidget.setSwitchAction { [weak self] (enabled) in
+            self?.fpvWidget?.enableHardwareDecode = enabled
+        }
+        
+        let fpvFeedCustomization = FPVVideoFeedWidget().setTitle("Video Feed", andIconName: nil)
+        fpvFeedCustomization.fpvWidget = fpvWidget
+        
+        listPanel.addWidgetArray([
+                                hardwareDecodeWidget,
+                                fpvFeedCustomization,
+                                cameraNameVisibility,
+                                cameraSideVisibility,
+                                gridlinesVisibility,
+                                gridlinesType,
+                                centerImageVisibility,
+                                centerImageType,
+                                centerImageColor])
+        fpvCustomizationPanel = listPanel
+    }
 }
